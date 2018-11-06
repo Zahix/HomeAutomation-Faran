@@ -11,6 +11,8 @@ public class Account {
     public Account() {
     }
 
+
+
     public Account(String email, String devicemac, String liverequest, String name, String gender) {
         this.email = email;
         this.devicemac = devicemac;
@@ -58,5 +60,16 @@ public class Account {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", devicemac='" + devicemac + '\'' +
+                ", liverequest='" + liverequest + '\'' +
+                ", gender='" + gender + '\'' +
+                '}';
     }
 }

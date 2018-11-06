@@ -180,9 +180,9 @@ public class SignUpActivity extends AppCompatActivity {
         if (!Validation()) {
             return;
         }
-
         pb.setVisibility(View.VISIBLE);
-
+        ll_Signup.setEnabled(false);
+        ll_SignIn.setEnabled(false);
         mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -201,6 +201,8 @@ public class SignUpActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             pb.setVisibility(View.GONE);
+                            ll_Signup.setEnabled(true);
+                            ll_SignIn.setEnabled(true);
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignUpActivity.this, "User registered", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignUpActivity.this, LogInActivity.class));
@@ -214,11 +216,17 @@ public class SignUpActivity extends AppCompatActivity {
 
 
                 } else {
+
+                    ll_Signup.setEnabled(true);
+                    ll_SignIn.setEnabled(true);
                     pb.setVisibility(View.GONE);
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
 
                     } else {
+
+                        ll_Signup.setEnabled(true);
+                        ll_SignIn.setEnabled(true);
                         pb.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }

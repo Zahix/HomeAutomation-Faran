@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.zahid.homeautomation.Model.Account;
 import com.example.zahid.homeautomation.Model.Month;
+import com.example.zahid.homeautomation.Service.BillCalculationService;
 import com.example.zahid.homeautomation.Utill.Common;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,11 +40,24 @@ public class MainMenuActivity extends AppCompatActivity {
     String deviceMac, email;
     Calendar calendar;
     LottieAnimationView ltv_bulb;
+    BillCalculationService billCalculationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        billCalculationService = new BillCalculationService();
+
+//        if (billCalculationService.validateRequest("243")) {
+//            billCalculationService.execute("243");
+//            billCalculationService.execute("481");
+//            billCalculationService.execute("60");
+//            billCalculationService.execute("330");
+//            billCalculationService.execute("460");
+//            billCalculationService.execute("713");
+//        }
+
 
         ltv_bulb = (LottieAnimationView) findViewById(R.id.lav_loading);
         tv_units = (TextView) findViewById(R.id.tv_units);
@@ -75,10 +89,14 @@ public class MainMenuActivity extends AppCompatActivity {
                 for (DataSnapshot monthDataSnapShot : dataSnapshot.getChildren()) {
                     Month month = monthDataSnapShot.getValue(Month.class);
                     if (month != null && month.getMonth().equals("nov")) {
-                        tv_units.setText(month.getMounits());
-                        tv_amp.setText(month.getMomaxampere());
-                        tv_volts.setText(month.getMomaxvoltage());
+                        tv_units.setText(month.getMounits() + " Unit");
+                        tv_amp.setText(month.getMomaxampere()+" Amp");
+                        tv_volts.setText(month.getMomaxvoltage()+" Volt");
                         tv_crt_Date.setText("Last Updated at: " + String.valueOf(calendar.get(Calendar.HOUR)) + ":00");
+
+                        if (billCalculationService.validateRequest(month.getMounits())){
+                            tv_currency.setText(String.valueOf(billCalculationService.execute(month.getMounits()) +" Rs"));
+                        }
                     }
                 }
                 ltv_bulb.setVisibility(View.GONE);
@@ -86,7 +104,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MainMenuActivity.this, "Database Error: "+ databaseError, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainMenuActivity.this, "Database Error: " + databaseError, Toast.LENGTH_SHORT).show();
                 ltv_bulb.setVisibility(View.GONE);
             }
         });

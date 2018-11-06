@@ -56,5 +56,15 @@ public class Month {
         this.mounits = mounits;
     }
 
-
+    @Override
+    public String toString() {
+        return "Month{" +
+                "devicemac='" + devicemac + '\'' +
+                ", momaxampere='" + momaxampere + '\'' +
+                ", momaxvoltage='" + momaxvoltage + '\'' +
+                ", motimestamp='" + motimestamp + '\'' +
+                ", mounits='" + mounits + '\'' +
+                ", Month='" + Month + '\'' +
+                '}';
+    }
 }
