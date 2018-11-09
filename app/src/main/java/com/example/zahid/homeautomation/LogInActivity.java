@@ -2,13 +2,17 @@ package com.example.zahid.homeautomation;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Patterns;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,13 +29,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class LogInActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     EditText email, password;
     LinearLayout ll_login;
     ProgressBar pb;
-    private boolean userVerfication = false;
     FirebaseUser user;
+    private boolean activityState = true;
+    private boolean processing = false;
+    BaseActivity baseActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +47,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
 
 
+        baseActivity = new BaseActivity();
         mAuth = FirebaseAuth.getInstance();
         pb = (ProgressBar) findViewById(R.id.pb);
         email = (EditText) findViewById(R.id.et_email);
@@ -96,47 +105,105 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void userLogin() {
+        if (processing) {
+            return;
+        }
+
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (!baseActivity.hasInternet(connectivity)) {
+//            Toast.makeText(this, "Check your internet", Toast.LENGTH_SHORT).show();
+            baseActivity.warningDialog(LogInActivity.this,"Check your internet","Internet not found");
+            return;
+        }
         if (!Validation()) {
             return;
         }
+
         pb.setVisibility(View.VISIBLE);
+//        showSweetLoadingDialog();
+        processing = true;
         mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if (checkEmailVerfication()) {
-                    if (task.isSuccessful()) {
-                        pb.setVisibility(View.GONE);
+                processing = false;
+                if (task.isSuccessful()) {
+                    pb.setVisibility(View.GONE);
+                    ll_login.setEnabled(true);
+                    if (checkEmailVerfication()) {
                         Intent intent = new Intent(LogInActivity.this, MainMenuActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
-                    } else {
-                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        pb.setVisibility(View.GONE);
                     }
-                }
-                else {
+                } else {
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     pb.setVisibility(View.GONE);
+                    ll_login.setEnabled(true);
                 }
+
             }
         });
+
+
     }
 
+    //    private void showSweetLoadingDialog(){
+//        SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+//        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+//        pDialog.setTitleText("Loading");
+//        pDialog.setCancelable(false);
+//        pDialog.show();
+//    }
     private boolean checkEmailVerfication() {
         user = mAuth.getCurrentUser();
         if (user != null && !user.isEmailVerified()) {
-            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(LogInActivity.this, "Verification Email Sent", Toast.LENGTH_SHORT).show();
-                }
-            });
+            verificationEmailDialogue(user);
             return false;
         } else {
             return true;
         }
     }
+
+    private void verificationEmailDialogue(final FirebaseUser user) {
+        if (activityState) {
+            try {
+                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Account is not verified!")
+                        .setContentText("Would you like us to send verification email?")
+                        .setConfirmText("Yes")
+                        .setCancelText("No")
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.cancel();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                baseActivity.sendEmail(user);
+                                sweetAlertDialog.cancel();
+                                baseActivity.sucessDialog(LogInActivity.this,"Verification email send","",user);
+                            }
+                        })
+                        .show();
+
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Verification dialog failed to load: " + e, Toast.LENGTH_SHORT).show();
+                Log.e("verification", String.valueOf(e));
+            }
+
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        activityState = false;
+    }
+
 
     private boolean Validation() {
         String validation = Common.Validation("default", email.getText().toString().trim(), password.getText().toString().trim());
@@ -163,5 +230,6 @@ public class LogInActivity extends AppCompatActivity {
         }
         return true;
     }
+
 
 }

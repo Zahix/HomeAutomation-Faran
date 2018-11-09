@@ -2,8 +2,11 @@ package com.example.zahid.homeautomation;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
     private List<String> gender;
     Spinner sp_gender;
     String selectedGender = "Male";
+    BaseActivity baseActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
 
+        baseActivity = new BaseActivity();
         sp_gender = (Spinner) findViewById(R.id.sp_gender);
 
         gender = new ArrayList<>();
@@ -177,6 +182,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+
+        ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (!baseActivity.hasInternet(connectivity)){
+//            Toast.makeText(this, "Check your internet", Toast.LENGTH_SHORT).show();
+            baseActivity.warningDialog(SignUpActivity.this,"Check your internet","Internet not found");
+            return;
+        }
         if (!Validation()) {
             return;
         }
