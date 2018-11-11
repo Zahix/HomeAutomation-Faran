@@ -55,7 +55,8 @@ dependencies {
     implementation 'im.dacer:AndroidCharts:1.0.4'
 
     //circular image
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.mikhaellopez:circularimageview:3.2.0'          // circle image view
+
     //lotte
     implementation 'com.airbnb.android:lottie:2.5.4'
     //moving image

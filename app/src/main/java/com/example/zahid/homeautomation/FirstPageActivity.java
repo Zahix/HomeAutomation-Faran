@@ -73,7 +73,7 @@ public class FirstPageActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         
         if (user != null && user.isEmailVerified()) {
-            startActivity(new Intent(this, MainMenuActivity.class));
+            startActivity(new Intent(this, IndexActivity.class));
             finish();
         }
     }

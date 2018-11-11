@@ -16,4 +16,5 @@
     <string name="bar_chart">Bar Chart</string>
     <string name="linear_chart">Linear Chart</string>
     <string name="devolping">Devolping</string>
+    <string name="title_activity_index">IndexActivity</string>
 </resources>

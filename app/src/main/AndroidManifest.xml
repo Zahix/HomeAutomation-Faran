@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".MainMenuActivity" />
         <activity android:name=".BarChartActivity" />
         <activity android:name=".AccountList" />
         <activity
@@ -32,11 +31,11 @@
         <activity
             android:name=".LogInActivity"
             android:theme="@style/MainPage" />
+        <activity android:name=".BaseActivity" />
         <activity
-            android:name=".MainActivty"
-            android:label="@string/title_activity_main_activty"
+            android:name=".IndexActivity"
+            android:label="@string/title_activity_index"
             android:theme="@style/AppTheme"></activity>
-        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

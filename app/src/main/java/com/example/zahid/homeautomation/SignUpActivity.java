@@ -202,7 +202,7 @@ public class SignUpActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Account user = new Account(
                             email.getText().toString().trim(),
-                            "asd1234",
+                            null,
                             "false",
                             username.getText().toString().trim(),
                             selectedGender

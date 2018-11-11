@@ -3,6 +3,7 @@ package com.example.zahid.homeautomation;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -19,8 +22,11 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.zahid.homeautomation.Model.Account;
+import com.example.zahid.homeautomation.Model.User;
 import com.example.zahid.homeautomation.Utill.Common;
 import com.example.zahid.homeautomation.Utill.EasingAnim;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,8 +34,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import android.app.Dialog;
 
 public class LogInActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
@@ -40,6 +53,7 @@ public class LogInActivity extends AppCompatActivity {
     private boolean activityState = true;
     private boolean processing = false;
     BaseActivity baseActivity;
+    Account myAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +61,7 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.activity_log_in);
 
 
+        myAccount = new Account();
         baseActivity = new BaseActivity();
         mAuth = FirebaseAuth.getInstance();
         pb = (ProgressBar) findViewById(R.id.pb);
@@ -112,7 +127,7 @@ public class LogInActivity extends AppCompatActivity {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (!baseActivity.hasInternet(connectivity)) {
 //            Toast.makeText(this, "Check your internet", Toast.LENGTH_SHORT).show();
-            baseActivity.warningDialog(LogInActivity.this,"Check your internet","Internet not found");
+            baseActivity.warningDialog(LogInActivity.this, "Check your internet", "Internet not found");
             return;
         }
         if (!Validation()) {
@@ -130,10 +145,7 @@ public class LogInActivity extends AppCompatActivity {
                     pb.setVisibility(View.GONE);
                     ll_login.setEnabled(true);
                     if (checkEmailVerfication()) {
-                        Intent intent = new Intent(LogInActivity.this, MainMenuActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
+                        getUserData();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -147,6 +159,13 @@ public class LogInActivity extends AppCompatActivity {
 
     }
 
+    private void indexActivityNav() {
+        Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     //    private void showSweetLoadingDialog(){
 //        SweetAlertDialog pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
 //        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
@@ -154,6 +173,33 @@ public class LogInActivity extends AppCompatActivity {
 //        pDialog.setCancelable(false);
 //        pDialog.show();
 //    }
+    private void getUserData() {
+        if (mAuth.getCurrentUser() != null) {
+            FirebaseDatabase.getInstance().getReference("account")
+                    .orderByChild("email")
+                    .equalTo(mAuth.getCurrentUser().getEmail()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot accountDataSnapShot : dataSnapshot.getChildren()) {
+                        myAccount = accountDataSnapShot.getValue(Account.class);
+                    }
+
+                    if (myAccount != null && myAccount.getDevicemac() == null) {
+                        addDeviceMacDialog();
+                    }
+                    if (myAccount != null && myAccount.getDevicemac() != null) {
+                        indexActivityNav();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(LogInActivity.this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
     private boolean checkEmailVerfication() {
         user = mAuth.getCurrentUser();
         if (user != null && !user.isEmailVerified()) {
@@ -183,7 +229,7 @@ public class LogInActivity extends AppCompatActivity {
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 baseActivity.sendEmail(user);
                                 sweetAlertDialog.cancel();
-                                baseActivity.sucessDialog(LogInActivity.this,"Verification email send","",user);
+                                baseActivity.sucessDialog(LogInActivity.this, "Verification email send", "", user);
                             }
                         })
                         .show();
@@ -204,6 +250,70 @@ public class LogInActivity extends AppCompatActivity {
         activityState = false;
     }
 
+    private void addDeviceMacDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.add_device_mac);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        final TextView email = (TextView) dialog.findViewById(R.id.tv_email);
+        final TextView userName = (TextView) dialog.findViewById(R.id.tv_name);
+        final EditText et_post = (EditText) dialog.findViewById(R.id.et_post);
+
+        email.setText(myAccount.getEmail());
+        userName.setText(myAccount.getName());
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_submit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String review = et_post.getText().toString().trim();
+                if (review.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Please enter device MAC", Toast.LENGTH_SHORT).show();
+                } else {
+                    saveDeviceMacInDb(et_post.getText().toString().trim());
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
+    private void saveDeviceMacInDb(final String deviceMac) {
+        Account user = new Account(
+                email.getText().toString().trim(),
+                deviceMac,
+                "false",
+                myAccount.getName(),
+                myAccount.getGender()
+        );
+        FirebaseDatabase.getInstance().getReference("account")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isComplete()) {
+                    Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
+    }
 
     private boolean Validation() {
         String validation = Common.Validation("default", email.getText().toString().trim(), password.getText().toString().trim());

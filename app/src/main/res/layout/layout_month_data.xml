@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             >
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/ci_month"
                 android:layout_width="57dp"
                 android:layout_height="match_parent"
@@ -42,7 +42,7 @@
                     android:text="Units: " />
 
                 <TextView
-                    android:id="@+id/tv_units"
+                    android:id="@+id/tv_unitss"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="220" />
@@ -62,7 +62,7 @@
                     android:text="Maximum Ampere: " />
 
                 <TextView
-                    android:id="@+id/tv_month"
+                    android:id="@+id/tv_months"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="300" />
@@ -84,7 +84,7 @@
                     android:text="Maximum Voltage: " />
 
                 <TextView
-                    android:id="@+id/tv_voltage"
+                    android:id="@+id/tv_voltages"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="300" />
