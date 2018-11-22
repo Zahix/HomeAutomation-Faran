@@ -48,7 +48,6 @@ public class LogInActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     EditText email, password;
     LinearLayout ll_login;
-    ProgressBar pb;
     FirebaseUser user;
     private boolean activityState = true;
     private boolean processing = false;
@@ -64,7 +63,6 @@ public class LogInActivity extends AppCompatActivity {
         myAccount = new Account();
         baseActivity = new BaseActivity();
         mAuth = FirebaseAuth.getInstance();
-        pb = (ProgressBar) findViewById(R.id.pb);
         email = (EditText) findViewById(R.id.et_email);
         email.setPadding(0, 15, 0, 15);
         password = (EditText) findViewById(R.id.et_password);
@@ -134,7 +132,7 @@ public class LogInActivity extends AppCompatActivity {
             return;
         }
 
-        pb.setVisibility(View.VISIBLE);
+        final SweetAlertDialog progressBar = baseActivity.progressDialog(LogInActivity.this, "Please wait", "Authentication....");
 //        showSweetLoadingDialog();
         processing = true;
         mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -142,14 +140,15 @@ public class LogInActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 processing = false;
                 if (task.isSuccessful()) {
-                    pb.setVisibility(View.GONE);
+                    progressBar.cancel();
                     ll_login.setEnabled(true);
                     if (checkEmailVerfication()) {
+
                         getUserData();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    pb.setVisibility(View.GONE);
+                    progressBar.cancel();
                     ll_login.setEnabled(true);
                 }
 
@@ -175,11 +174,13 @@ public class LogInActivity extends AppCompatActivity {
 //    }
     private void getUserData() {
         if (mAuth.getCurrentUser() != null) {
+            final SweetAlertDialog progressBarVerify = baseActivity.progressDialog(LogInActivity.this, "Please wait", "Checking email verification....");
             FirebaseDatabase.getInstance().getReference("account")
                     .orderByChild("email")
                     .equalTo(mAuth.getCurrentUser().getEmail()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    progressBarVerify.cancel();
                     for (DataSnapshot accountDataSnapShot : dataSnapshot.getChildren()) {
                         myAccount = accountDataSnapShot.getValue(Account.class);
                     }
@@ -195,6 +196,7 @@ public class LogInActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Toast.makeText(LogInActivity.this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+                    progressBarVerify.cancel();
                 }
             });
         }
@@ -213,26 +215,29 @@ public class LogInActivity extends AppCompatActivity {
     private void verificationEmailDialogue(final FirebaseUser user) {
         if (activityState) {
             try {
-                new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("Account is not verified!")
-                        .setContentText("Would you like us to send verification email?")
-                        .setConfirmText("Yes")
-                        .setCancelText("No")
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.cancel();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                baseActivity.sendEmail(user);
-                                sweetAlertDialog.cancel();
-                                baseActivity.sucessDialog(LogInActivity.this, "Verification email send", "", user);
-                            }
-                        })
-                        .show();
+                SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
+                sweetAlertDialog.setTitleText("Account is not verified!");
+                sweetAlertDialog.setContentText("Would you like us to send verification email?");
+                sweetAlertDialog.setConfirmText("Yes");
+                sweetAlertDialog.setCancelText("No");
+                sweetAlertDialog.setCanceledOnTouchOutside(false);
+                sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                });
+                sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        baseActivity.sendEmail(user);
+                        sweetAlertDialog.cancel();
+                        baseActivity.sucessDialog(LogInActivity.this, "Verification email send", "", user);
+                    }
+                });
+
+
+                sweetAlertDialog.show();
 
 
             } catch (Exception e) {
@@ -255,7 +260,7 @@ public class LogInActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.add_device_mac);
         dialog.setCancelable(true);
-
+        dialog.setCanceledOnTouchOutside(false);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;

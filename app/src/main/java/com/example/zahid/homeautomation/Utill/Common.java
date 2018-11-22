@@ -1,6 +1,15 @@
 package com.example.zahid.homeautomation.Utill;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.util.Patterns;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.example.zahid.homeautomation.Model.Account;
 
 public class Common {
     public static int month = 0;
@@ -10,7 +19,7 @@ public class Common {
     public static final String STR_Units = "mounits";
     public static final String STR_Month = "monthlydevicedata";
     public static boolean From_Main_Page = true;
-
+    public static Account profile;
 
     public static String Validation(String username, String email, String password) {
 
@@ -36,5 +45,6 @@ public class Common {
             return "vaildated";
         }
     }
+
 
 }

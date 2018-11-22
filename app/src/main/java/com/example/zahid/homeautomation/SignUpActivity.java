@@ -2,6 +2,7 @@ package com.example.zahid.homeautomation;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -42,12 +43,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class SignUpActivity extends AppCompatActivity {
     EditText username, email, password;
     private FirebaseAuth mAuth;
     //    ImageView iv_back;
     LinearLayout ll_Signup, ll_SignIn;
-    ProgressBar pb;
     private List<String> gender;
     Spinner sp_gender;
     String selectedGender = "Male";
@@ -58,6 +60,18 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        //make translucent statusBar on kitkat devices
+        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
+            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
+        }
+        if (Build.VERSION.SDK_INT >= 19) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        //make fully Android Transparent Status bar
+        if (Build.VERSION.SDK_INT >= 21) {
+            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
 
         baseActivity = new BaseActivity();
         sp_gender = (Spinner) findViewById(R.id.sp_gender);
@@ -67,7 +81,6 @@ public class SignUpActivity extends AppCompatActivity {
         gender.add("Female");
         gender.add("Other");
 
-        pb = (ProgressBar) findViewById(R.id.pb);
         mAuth = FirebaseAuth.getInstance();
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -93,6 +106,17 @@ public class SignUpActivity extends AppCompatActivity {
 
         setSpinnerData();
 
+    }
+
+    public static void setWindowFlag(Activity activity, final int bits, boolean on) {
+        Window win = activity.getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        if (on) {
+            winParams.flags |= bits;
+        } else {
+            winParams.flags &= ~bits;
+        }
+        win.setAttributes(winParams);
     }
 
     private void setSpinnerData() {
@@ -184,15 +208,15 @@ public class SignUpActivity extends AppCompatActivity {
     private void registerUser() {
 
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (!baseActivity.hasInternet(connectivity)){
+        if (!baseActivity.hasInternet(connectivity)) {
 //            Toast.makeText(this, "Check your internet", Toast.LENGTH_SHORT).show();
-            baseActivity.warningDialog(SignUpActivity.this,"Check your internet","Internet not found");
+            baseActivity.warningDialog(SignUpActivity.this, "Check your internet", "Internet not found");
             return;
         }
         if (!Validation()) {
             return;
         }
-        pb.setVisibility(View.VISIBLE);
+        final SweetAlertDialog sweetAlertDialog = baseActivity.progressDialog(SignUpActivity.this, "Please wait", "Request is processing...");
         ll_Signup.setEnabled(false);
         ll_SignIn.setEnabled(false);
         mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -212,15 +236,14 @@ public class SignUpActivity extends AppCompatActivity {
                             .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            pb.setVisibility(View.GONE);
+                            sweetAlertDialog.cancel();
                             ll_Signup.setEnabled(true);
                             ll_SignIn.setEnabled(true);
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignUpActivity.this, "User registered", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignUpActivity.this, LogInActivity.class));
                                 finish();
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(SignUpActivity.this, "User registration failed", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -231,7 +254,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     ll_Signup.setEnabled(true);
                     ll_SignIn.setEnabled(true);
-                    pb.setVisibility(View.GONE);
+                    sweetAlertDialog.cancel();
                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                         Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
 
@@ -239,7 +262,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                         ll_Signup.setEnabled(true);
                         ll_SignIn.setEnabled(true);
-                        pb.setVisibility(View.GONE);
+                        sweetAlertDialog.cancel();
                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
 

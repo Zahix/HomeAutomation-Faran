@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    >
 
     <include
         layout="@layout/app_bar_index"
@@ -22,6 +23,7 @@
         app:itemIconTint="@color/grey_40"
         app:itemTextColor="@color/grey_90"
         app:headerLayout="@layout/nav_header_index"
+        android:scrollbarStyle="insideInset"
         app:menu="@menu/activity_index_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

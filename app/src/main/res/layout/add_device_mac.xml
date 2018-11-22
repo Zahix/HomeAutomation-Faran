@@ -13,6 +13,7 @@
         android:padding="@dimen/spacing_large">
 
         <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/civ_dialog_avatar"
             android:layout_width="@dimen/spacing_xmlarge"
             android:layout_height="@dimen/spacing_xmlarge"
             android:src="@drawable/face"

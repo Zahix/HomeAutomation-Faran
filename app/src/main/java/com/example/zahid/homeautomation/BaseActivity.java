@@ -50,31 +50,70 @@ public class BaseActivity extends AppCompatActivity {
     public void sucessDialog(Context context, String contentText, String titleText, FirebaseUser user) {
 
         if (user != null) {
-            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText(user.getEmail())
-                    .setContentText(contentText)
-                    .setConfirmText("OK")
-                    .setConfirmClickListener(null)
-                    .show();
+            SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
+            sweetAlertDialog.setTitleText(user.getEmail());
+            sweetAlertDialog.setContentText(contentText);
+            sweetAlertDialog.setConfirmText("Ok");
+            sweetAlertDialog.setCanceledOnTouchOutside(false);
+            sweetAlertDialog.setConfirmClickListener(null);
+            sweetAlertDialog.show();
+
+//            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+//                    .setTitleText(user.getEmail())
+//                    .setContentText(contentText)
+//                    .setConfirmText("OK")
+//                    .setConfirmClickListener(null)
+//                    .show();
         } else {
-            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText(titleText)
-                    .setContentText(contentText)
-                    .setConfirmText("OK")
-                    .setConfirmClickListener(null)
-                    .show();
+            SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE);
+            sweetAlertDialog.setTitleText(titleText);
+            sweetAlertDialog.setContentText(contentText);
+            sweetAlertDialog.setConfirmText("Ok");
+            sweetAlertDialog.setCanceledOnTouchOutside(false);
+            sweetAlertDialog.setConfirmClickListener(null);
+            sweetAlertDialog.show();
+
+//            new SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
+//                    .setTitleText(titleText)
+//                    .setContentText(contentText)
+//                    .setConfirmText("OK")
+//                    .setConfirmClickListener(null)
+//                    .show();
         }
     }
 
     public void warningDialog(Context context, String contentText, String titleText) {
-        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                .setTitleText(titleText)
-                .setContentText(contentText)
-                .setConfirmText("OK")
-                .setConfirmClickListener(null)
-                .show();
+
+        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
+        sweetAlertDialog.setTitleText(titleText);
+        sweetAlertDialog.setContentText(contentText);
+        sweetAlertDialog.setConfirmText("Ok");
+        sweetAlertDialog.setCanceledOnTouchOutside(false);
+        sweetAlertDialog.setConfirmClickListener(null);
+        sweetAlertDialog.show();
+
+
+//        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+//                .setTitleText(titleText)
+//                .setContentText(contentText)
+//                .setConfirmText("OK")
+//                .setConfirmClickListener(null)
+//                .show();
     }
-    public void errorDialog(Context context, String contentText, String titleText){
+    public SweetAlertDialog progressDialog(Context context,String heading,String content){
+        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog.setTitleText(heading);
+        sweetAlertDialog.setContentText(content);
+        sweetAlertDialog.getProgressHelper().setBarColor(R.color.colorPrimaryDark);
+        sweetAlertDialog.getProgressHelper().setRimColor(R.color.lightPink);
+        sweetAlertDialog.setCancelable(false);
+        sweetAlertDialog.setCanceledOnTouchOutside(false);
+        sweetAlertDialog.show();
+
+        return sweetAlertDialog;
+    }
+
+    public void errorDialog(Context context, String contentText, String titleText) {
         new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                 .setTitleText(titleText)
                 .setContentText(contentText)

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -9,11 +9,15 @@
     </style>
 
     <style name="MainPage" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">@color/skyblue</item>
+        <!--<item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>-->
+        <!--<item name="colorPrimaryDark">@android:color/transparent</item>-->
+        <item name="colorPrimaryDark">@color/colorNotificationBar</item>
+        <!--<item name="colorPrimaryDark">@color/skyblue</item>-->
         <item name="colorPrimary">@color/lightPink</item>
-
+       
     </style>
-
+    
+    
     <style name="MainActivity" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimaryDark">@color/skyblue</item>
         <item name="colorPrimary">@color/lightPink</item>

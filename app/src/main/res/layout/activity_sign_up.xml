@@ -4,7 +4,7 @@
     android:id="@+id/activity_sign_up"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/skyblue"
+    android:background="@drawable/bg_gradient"
     tools:context=".SignUpActivity">
     <!--<com.flaviofaria.kenburnsview.KenBurnsView-->
     <!--android:id="@+id/image"-->
@@ -59,16 +59,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/ll_bottom"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="60dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingLeft="@dimen/space20"
-        android:paddingRight="@dimen/space20"
-        >
+        android:paddingRight="@dimen/space20">
 
         <TextView
             android:id="@+id/tv_sign_up"
@@ -181,8 +180,7 @@
                 android:id="@+id/sp_gender"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textColor="@color/White"
-                />
+                android:textColor="@color/White" />
         </LinearLayout>
 
         <LinearLayout
@@ -214,3 +212,4 @@
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
+
