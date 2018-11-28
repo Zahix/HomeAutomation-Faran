@@ -224,16 +224,29 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
-                    Account user = new Account(
+                    Account myUser = new Account(
+                            username.getText().toString().trim(),
                             email.getText().toString().trim(),
                             null,
                             "false",
-                            username.getText().toString().trim(),
-                            selectedGender
+                            selectedGender,
+                            "",
+                            "",
+                            "",
+                            "",
+                            ""
+
                     );
+//                    Account user = new Account(
+//                            email.getText().toString().trim(),
+//                            null,
+//                            "false",
+//                            username.getText().toString().trim(),
+//                            selectedGender
+//                    );
                     FirebaseDatabase.getInstance().getReference("account")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            .setValue(myUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             sweetAlertDialog.cancel();

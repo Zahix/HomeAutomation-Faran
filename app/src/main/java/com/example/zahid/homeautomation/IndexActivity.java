@@ -34,12 +34,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -65,6 +67,7 @@ public class IndexActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
+
 
         Common.profile = new Account();
 
@@ -116,6 +119,12 @@ public class IndexActivity extends AppCompatActivity
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().hide();
+            }
+        }
     }
 
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
@@ -180,13 +189,14 @@ public class IndexActivity extends AppCompatActivity
         });
     }
 
-
     private void fetchNameAndGender(String email) {
         ltv_bulb.setVisibility(View.VISIBLE);
         if (email != null) {
             query = FirebaseDatabase.getInstance().getReference(Common.STR_Account)
                     .orderByChild("email")
                     .equalTo(email);
+        } else {
+            return;
         }
         query.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
@@ -208,6 +218,11 @@ public class IndexActivity extends AppCompatActivity
                         }
                         tv_navbar_email.setText(account.getEmail());
                         tv_navbar_name.setText(account.getName());
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().show();
                     }
                 }
                 ltv_bulb.setVisibility(View.GONE);
@@ -279,16 +294,29 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void saveDeviceMacInDb(final String deviceMac) {
-        Account user = new Account(
+        Account myUser = new Account(
+                Common.profile.getName(),
                 Common.profile.getEmail(),
                 deviceMac,
                 "false",
-                Common.profile.getName(),
-                Common.profile.getGender()
+                Common.profile.getGender(),
+                Common.profile.getLname(),
+                Common.profile.getDob(),
+                Common.profile.getOccupation(),
+                Common.profile.getAddress(),
+                Common.profile.getCity()
+
         );
+//        Account user = new Account(
+//                Common.profile.getEmail(),
+//                deviceMac,
+//                "false",
+//                Common.profile.getName(),
+//                Common.profile.getGender()
+//        );
         FirebaseDatabase.getInstance().getReference("account")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .setValue(myUser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isComplete()) {
@@ -362,10 +390,10 @@ public class IndexActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            Intent intent = new Intent(IndexActivity.this, ProfileActivity.class);
+            Intent intent = new Intent(this, ProfileSettingActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_invite) {
-            Toast.makeText(this, "Invite", Toast.LENGTH_SHORT).show();
+//            Intent intent = new Intent(IndexActivity.this, ProfileEditActivity.class);
+//            startActivity(intent);
         } else if (id == R.id.nav_changepassword) {
             Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_adddevice) {

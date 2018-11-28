@@ -136,6 +136,8 @@ public class LogInActivity extends AppCompatActivity {
 //        showSweetLoadingDialog();
         processing = true;
         mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 processing = false;
@@ -224,7 +226,7 @@ public class LogInActivity extends AppCompatActivity {
                 sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.cancel();
+                            sweetAlertDialog.cancel();
                     }
                 });
                 sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -298,16 +300,29 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void saveDeviceMacInDb(final String deviceMac) {
-        Account user = new Account(
-                email.getText().toString().trim(),
+        Account myUser = new Account(
+                Common.profile.getName(),
+                Common.profile.getEmail(),
                 deviceMac,
                 "false",
-                myAccount.getName(),
-                myAccount.getGender()
+                Common.profile.getGender(),
+                Common.profile.getLname(),
+                Common.profile.getDob(),
+                Common.profile.getOccupation(),
+                Common.profile.getAddress(),
+                Common.profile.getCity()
+
         );
+//        Account user = new Account(
+//                email.getText().toString().trim(),
+//                deviceMac,
+//                "false",
+//                myAccount.getName(),
+//                myAccount.getGender()
+//        );
         FirebaseDatabase.getInstance().getReference("account")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .setValue(myUser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isComplete()) {

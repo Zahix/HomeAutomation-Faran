@@ -36,7 +36,9 @@
             android:name=".IndexActivity"
             android:label="@string/title_activity_index"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileEditActivity" />
+        <activity android:name=".ProfileSettingActivity" />
+        <activity android:name=".ProfileViewActivity"></activity>
     </application>
 
 </manifest>
