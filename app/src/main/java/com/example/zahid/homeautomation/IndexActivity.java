@@ -9,39 +9,43 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatButton;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.zahid.homeautomation.Model.Account;
 import com.example.zahid.homeautomation.Model.Month;
+import com.example.zahid.homeautomation.Model.UnitCalOffline;
 import com.example.zahid.homeautomation.Service.BillCalculationService;
 import com.example.zahid.homeautomation.Utill.Common;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.Calendar;
-import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -49,6 +53,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class IndexActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    ImageView iv_setting;
     TextView tv_welcome, tv_units, tv_currency, tv_amp, tv_volts, tv_crt_Date, tv_month, tv_navbar_email, tv_navbar_name;
     FirebaseAuth mAuth;
     Query query;
@@ -57,7 +62,7 @@ public class IndexActivity extends AppCompatActivity
     Calendar calendar;
     LottieAnimationView ltv_bulb;
     BillCalculationService billCalculationService;
-    Toolbar toolbar;
+    //    Toolbar toolbar;
     DrawerLayout drawer;
     NavigationView navigationView;
     BaseActivity baseActivity;
@@ -89,15 +94,15 @@ public class IndexActivity extends AppCompatActivity
             fetchNameAndGender(email);
         }
 
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("HomeAutomation");
-        }
+//        setSupportActionBar(toolbar);
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setTitle("HomeAutomation");
+//        }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
 
         View headerView = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
@@ -125,6 +130,107 @@ public class IndexActivity extends AppCompatActivity
                 getSupportActionBar().hide();
             }
         }
+        headerComponents();
+        iv_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addUnitsOfflineDialog();
+            }
+        });
+    }
+
+    private void addUnitsOfflineDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.add_units_offline);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        final TextView email = (TextView) dialog.findViewById(R.id.tv_email);
+        final TextView userName = (TextView) dialog.findViewById(R.id.tv_name);
+        final EditText et_units = (EditText) dialog.findViewById(R.id.et_units);
+        final EditText et_ampere = (EditText) dialog.findViewById(R.id.et_ampere);
+        final EditText et_volts = (EditText) dialog.findViewById(R.id.et_volts);
+
+        final CircularImageView civ_dialog_avatar = (CircularImageView) dialog.findViewById(R.id.civ_dialog_avatar);
+
+        email.setText(Common.profile.getEmail());
+        userName.setText(Common.profile.getName());
+        if (Common.profile == null || Common.profile.getEmail() == null || Common.profile.getEmail().equals("")) {
+            return;
+        }
+        if (Common.profile.getGender().equals("Female") || Common.profile.getGender().equals("Other")) {
+            civ_dialog_avatar.setImageResource(R.drawable.girl);
+        }
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_submit)).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onClick(View v) {
+                if (et_units != null) {
+                    Common.unitCalService = new UnitCalOffline(
+                            et_volts.getText().toString().trim(),
+                            et_ampere.getText().toString().trim(),
+                            et_units.getText().toString().trim()
+                    );
+                    if (billCalculationService.validateRequest(Common.unitCalService.getUnits())) {
+                        Common.offlineRPS = String.valueOf(billCalculationService.execute(Common.unitCalService.getUnits()));
+
+                        tv_units.setText(et_units.getText().toString().trim() + " Unit");
+                        tv_amp.setText(et_ampere.getText().toString().trim() + " Amp");
+                        tv_volts.setText(et_volts.getText().toString().trim() + " Volt");
+                        tv_crt_Date.setText("Last Updated at: " + String.valueOf(calendar.get(Calendar.HOUR)) + ":00");
+                        tv_month.setText("Offline");
+                        tv_currency.setText(Common.offlineRPS + " Rs");
+                    }
+
+                } else{
+                    Toast.makeText(IndexActivity.this, "Enter Units", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.dismiss();
+            }
+
+        });
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
+
+    private void headerComponents() {
+
+        View backPressed = findViewById(R.id.back_btn);
+        backPressed.setVisibility(View.GONE);
+
+
+        View navBtn = findViewById(R.id.iv_navbar);
+        navBtn.setVisibility(View.VISIBLE);
+        navBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer(Gravity.START);
+            }
+        });
+        View logout = findViewById(R.id.powerImage);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutDialog();
+            }
+        });
     }
 
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
@@ -139,6 +245,7 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void iniUiComponents() {
+        iv_setting = (ImageView) findViewById(R.id.iv_setting);
         tv_month = (TextView) findViewById(R.id.tv_month);
         ltv_bulb = (LottieAnimationView) findViewById(R.id.lav_loading);
         tv_units = (TextView) findViewById(R.id.tv_units);
@@ -149,7 +256,7 @@ public class IndexActivity extends AppCompatActivity
         tv_welcome = (TextView) findViewById(R.id.tv_welcome);
         circleImageView = (CircularImageView) findViewById(R.id.civ_profileImage);
         tv_crt_Date = (TextView) findViewById(R.id.tv_crt_date);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -230,7 +337,7 @@ public class IndexActivity extends AppCompatActivity
                     if (!deviceMac.isEmpty()) {
                         fetchMonthData();
                     }
-                } else {
+                } else if (Common.StateForMac) {
                     addDeviceMacDialog();
                 }
             }
@@ -269,6 +376,13 @@ public class IndexActivity extends AppCompatActivity
             civ_dialog_avatar.setImageResource(R.drawable.girl);
         }
 
+        ((AppCompatButton) dialog.findViewById(R.id.bt_offline)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Common.StateForMac = false;
+            }
+        });
         ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,13 +421,7 @@ public class IndexActivity extends AppCompatActivity
                 Common.profile.getCity()
 
         );
-//        Account user = new Account(
-//                Common.profile.getEmail(),
-//                deviceMac,
-//                "false",
-//                Common.profile.getName(),
-//                Common.profile.getGender()
-//        );
+
         FirebaseDatabase.getInstance().getReference("account")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .setValue(myUser).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -389,13 +497,15 @@ public class IndexActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        item.setCheckable(false);
         if (id == R.id.nav_profile) {
             Intent intent = new Intent(this, ProfileSettingActivity.class);
             startActivity(intent);
 //            Intent intent = new Intent(IndexActivity.this, ProfileEditActivity.class);
 //            startActivity(intent);
         } else if (id == R.id.nav_changepassword) {
-            Toast.makeText(this, "Change Password", Toast.LENGTH_SHORT).show();
+            showChangePasswordDialog();
+
         } else if (id == R.id.nav_adddevice) {
             if (Common.profile.getDevicemac() == null) {
                 addDeviceMacDialog();
@@ -408,10 +518,14 @@ public class IndexActivity extends AppCompatActivity
 //        else if (id == R.id.nav_faqs) {
 //            Toast.makeText(this, "FAQs", Toast.LENGTH_SHORT).show();
 //        }
-        else if (id == R.id.nav_feedback) {
+        else if (id == R.id.nav_about_us) {
+            Intent intent = new Intent(IndexActivity.this, AboutUsActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_feedback) {
             Toast.makeText(this, "Feedback", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_contact) {
-            Toast.makeText(this, "Contact", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(IndexActivity.this, ContactUs.class);
+            startActivity(intent);
         } else if (id == R.id.nav_logout) {
             if (mAuth.getCurrentUser() != null) {
                 logoutDialog();
@@ -421,6 +535,89 @@ public class IndexActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void showChangePasswordDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.change_password_dialog);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        final EditText oldPassword = (EditText) dialog.findViewById(R.id.et_oldPassword);
+        final EditText newPassword = (EditText) dialog.findViewById(R.id.et_newpassword);
+        final EditText confirmPassword = (EditText) dialog.findViewById(R.id.confirmPassword);
+        final CircularImageView civ_profile = (CircularImageView) dialog.findViewById(R.id.civ_dialog_avatar);
+        final TextView tv_name = (TextView) dialog.findViewById(R.id.tv_name);
+        final TextView tv_email = (TextView) dialog.findViewById(R.id.tv_email);
+
+        if (!Common.profile.getGender().equals("Male")) {
+            civ_profile.setImageResource(R.drawable.girl);
+        }
+        tv_name.setText(Common.profile.getName());
+        tv_email.setText(Common.profile.getEmail());
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ((AppCompatButton) dialog.findViewById(R.id.bt_submit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (newPassword.getText().toString().trim().equals(confirmPassword.getText().toString().trim()) & !newPassword.getText().toString().trim().equals("") & !confirmPassword.getText().toString().trim().equals("")) {
+                    updatePasswordInDb(newPassword.getText().toString().trim(), oldPassword.getText().toString().trim());
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(IndexActivity.this, "Password must match confirm password", Toast.LENGTH_SHORT).show();
+                    newPassword.setText("");
+                    confirmPassword.setText("");
+                }
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
+    private void updatePasswordInDb(final String newPassword, String oldPassword) {
+        final SweetAlertDialog prgressDialog = baseActivity.progressDialog(IndexActivity.this, "Please Wait", "Processing...");
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(Common.profile.getEmail(), oldPassword);
+        if (user != null) {
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    prgressDialog.cancel();
+                                    baseActivity.sucessDialog(IndexActivity.this, "Password change successful", "Successful", null);
+
+                                } else {
+                                    prgressDialog.cancel();
+                                    baseActivity.errorDialog(IndexActivity.this, "Failed to change password", "Failed");
+                                }
+                            }
+                        });
+                    } else {
+                        prgressDialog.cancel();
+                        baseActivity.errorDialog(IndexActivity.this, "Old password is wrong", "Failed");
+                    }
+                }
+            });
+
+        }
+    }
+
 
     private void logoutDialog() {
         SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);

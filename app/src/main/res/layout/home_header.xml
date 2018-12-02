@@ -19,17 +19,11 @@
             android:layout_weight="2">
 
             <ImageView
-                android:id="@+id/iv_navbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/btn_header_icon_drawer_normal"
-                android:visibility="gone"
-                />
-            <ImageView
                 android:id="@+id/back_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/btn_back_arrow_normal"
+                app:srcCompat="@drawable/menu"
+                android:padding="10dp"
                 android:contentDescription="back" />
 
             <LinearLayout
@@ -67,12 +61,6 @@
             android:layout_weight="1"
             android:gravity="center_vertical|right">
 
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/imageviewHome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                app:srcCompat="@drawable/button_home" />
 
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/powerImage"

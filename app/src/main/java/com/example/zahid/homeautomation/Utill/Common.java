@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.zahid.homeautomation.Model.Account;
+import com.example.zahid.homeautomation.Model.UnitCalOffline;
 
 public class Common {
     public static int month = 0;
@@ -20,6 +21,9 @@ public class Common {
     public static final String STR_Month = "monthlydevicedata";
     public static boolean From_Main_Page = true;
     public static Account profile;
+    public static boolean StateForMac = true;
+    public static UnitCalOffline unitCalService;
+    public static String offlineRPS;
 
     public static String Validation(String username, String email, String password) {
 

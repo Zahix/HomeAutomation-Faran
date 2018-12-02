@@ -5,9 +5,11 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.Window;
@@ -40,6 +42,8 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.example.zahid.homeautomation.Utill.Common.month;
+
 public class ProfileEditActivity extends AppCompatActivity {
 
     CircularImageView avatar;
@@ -50,6 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private List<String> gender;
     private String selectedGender;
     BaseActivity baseActivity;
+    long date_ship_millis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +188,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         et_address.setText(Common.profile.getAddress());
         et_city.setText(Common.profile.getCity());
         setSpinnerData(Common.profile.getGender());
-        if (!Common.profile.getDob().equals("")) {
+        if (!TextUtils.isEmpty(Common.profile.getDob())) {
             dob_pickdate.setText(Common.profile.getDob());
         }
     }
@@ -282,6 +287,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private void dialogDatePickerLight(final Button bt) {
         Calendar cur_calender = Calendar.getInstance();
+
         DatePickerDialog datePicker = DatePickerDialog.newInstance(
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -290,19 +296,22 @@ public class ProfileEditActivity extends AppCompatActivity {
                         calendar.set(Calendar.YEAR, year);
                         calendar.set(Calendar.MONTH, monthOfYear);
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        long date_ship_millis = calendar.getTimeInMillis();
+                        date_ship_millis = calendar.getTimeInMillis();
+
+
 //                        Toast.makeText(ProfileEditActivity.this, Tools.getFormattedDateSimple(date_ship_millis), Toast.LENGTH_SHORT).show();
                         String date = DateFormat.format("dd-MM-yyyy", calendar).toString();
                         dob_pickdate.setText(date);
 
                     }
+
                 },
                 cur_calender.get(Calendar.YEAR),
                 cur_calender.get(Calendar.MONTH),
                 cur_calender.get(Calendar.DAY_OF_MONTH)
         );
         //set dark light
-        datePicker.setThemeDark(false);
+        datePicker.setThemeDark(true);
 
         datePicker.setAccentColor(getResources().getColor(R.color.colorPrimary));
 //        datePicker.setMinDate(cur_calender);

@@ -33,7 +33,7 @@
                 android:title="FAQs" />
             <item
                 android:id="@+id/nav_feedback"
-                android:icon="@drawable/rating"
+                android:icon="@drawable/rating2"
                 android:title="Customer feedback" />
 
         </menu>
@@ -45,6 +45,11 @@
                 android:id="@+id/nav_contact"
                 android:icon="@drawable/contactus"
                 android:title="Contact Us" />
+            <item
+                android:id="@+id/nav_about_us"
+                android:icon="@drawable/ic_perm_device_info"
+                android:title="About Us"
+                />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/logout"

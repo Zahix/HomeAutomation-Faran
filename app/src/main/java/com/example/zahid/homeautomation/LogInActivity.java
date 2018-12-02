@@ -179,7 +179,7 @@ public class LogInActivity extends AppCompatActivity {
             final SweetAlertDialog progressBarVerify = baseActivity.progressDialog(LogInActivity.this, "Please wait", "Checking email verification....");
             FirebaseDatabase.getInstance().getReference("account")
                     .orderByChild("email")
-                    .equalTo(mAuth.getCurrentUser().getEmail()).addValueEventListener(new ValueEventListener() {
+                    .equalTo(mAuth.getCurrentUser().getEmail()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     progressBarVerify.cancel();
@@ -201,6 +201,31 @@ public class LogInActivity extends AppCompatActivity {
                     progressBarVerify.cancel();
                 }
             });
+
+//            FirebaseDatabase.getInstance().getReference("account")
+//                    .orderByChild("email")
+//                    .equalTo(mAuth.getCurrentUser().getEmail()).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    progressBarVerify.cancel();
+//                    for (DataSnapshot accountDataSnapShot : dataSnapshot.getChildren()) {
+//                        myAccount = accountDataSnapShot.getValue(Account.class);
+//                    }
+//
+//                    if (myAccount != null && myAccount.getDevicemac() == null) {
+//                        addDeviceMacDialog();
+//                    }
+//                    if (myAccount != null && myAccount.getDevicemac() != null) {
+//                        indexActivityNav();
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Toast.makeText(LogInActivity.this, "Failed to fetch", Toast.LENGTH_SHORT).show();
+//                    progressBarVerify.cancel();
+//                }
+//            });
         }
     }
 
@@ -226,7 +251,7 @@ public class LogInActivity extends AppCompatActivity {
                 sweetAlertDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.cancel();
+                        sweetAlertDialog.cancel();
                     }
                 });
                 sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -275,6 +300,15 @@ public class LogInActivity extends AppCompatActivity {
         email.setText(myAccount.getEmail());
         userName.setText(myAccount.getName());
 
+        ((AppCompatButton) dialog.findViewById(R.id.bt_offline)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Common.StateForMac = false;
+                Intent intent = new Intent(LogInActivity.this, IndexActivity.class);
+                startActivity(intent);
+            }
+        });
         ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

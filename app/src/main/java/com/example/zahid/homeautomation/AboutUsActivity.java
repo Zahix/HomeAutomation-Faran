@@ -1,58 +1,24 @@
 package com.example.zahid.homeautomation;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.zahid.homeautomation.Utill.Common;
-import com.example.zahid.homeautomation.Utill.Tools;
 import com.google.firebase.auth.FirebaseAuth;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class ProfileSettingActivity extends AppCompatActivity {
-
-    TextView tv_name, tv_view_edit_profile;
-    CircularImageView civ_avatar;
+public class AboutUsActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_setting);
-//        Tools.setSystemBarColor(this, android.R.color.white);
+        setContentView(R.layout.activity_about_us);
 
 
-        mAuth = FirebaseAuth.getInstance();
-        iniUiComponents();
-        headerComponents();
-
-        tv_view_edit_profile.setPaintFlags(tv_view_edit_profile.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        if (Common.profile != null) {
-            if (Common.profile.getName() != null) {
-                tv_name.setText(Common.profile.getName());
-            }
-            if (Common.profile.getGender() != null) {
-                if (Common.profile.getGender().equals("Female") || Common.profile.getGender().equals("Other")) {
-                    civ_avatar.setImageResource(R.drawable.girl);
-                }
-            }
-        }
-
-        tv_view_edit_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProfileSettingActivity.this, ProfileViewActivity.class);
-                startActivity(intent);
-            }
-        });
+    headerComponents();
     }
-
 
     private void headerComponents() {
 
@@ -68,7 +34,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
         homeScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileSettingActivity.this, IndexActivity.class);
+                Intent intent = new Intent(AboutUsActivity.this, IndexActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
@@ -82,7 +48,6 @@ public class ProfileSettingActivity extends AppCompatActivity {
             }
         });
     }
-
     private void logoutDialog() {
         SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE);
         sweetAlertDialog.setCanceledOnTouchOutside(false);
@@ -100,8 +65,8 @@ public class ProfileSettingActivity extends AppCompatActivity {
             @Override
             public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                mAuth.getInstance().signOut();
-                Intent intent = new Intent(ProfileSettingActivity.this, FirstPageActivity.class);
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(AboutUsActivity.this, FirstPageActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 sweetAlertDialog.cancel();
                 startActivity(intent);
@@ -110,11 +75,5 @@ public class ProfileSettingActivity extends AppCompatActivity {
         });
         sweetAlertDialog.show();
 
-    }
-
-    private void iniUiComponents() {
-        civ_avatar = (CircularImageView) findViewById(R.id.civ_avatar);
-        tv_view_edit_profile = (TextView) findViewById(R.id.tv_view_edit_profile);
-        tv_name = (TextView) findViewById(R.id.tv_name);
     }
 }
