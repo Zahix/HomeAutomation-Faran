@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,10 +20,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,12 +54,16 @@ import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import static com.example.zahid.homeautomation.Utill.Common.settingStatusOnline;
+
 
 public class IndexActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ImageView iv_setting;
-    TextView tv_welcome, tv_units, tv_currency, tv_amp, tv_volts, tv_crt_Date, tv_month, tv_navbar_email, tv_navbar_name;
+    LinearLayout ll_box1, ll_box2, ll_box3, ll_box4;
+    ImageView iv_setting, iv_thunder_icon, iv_thunder_icon4, iv_thunder_mainIcon;
+    TextView tv_welcome, tv_units, tv_currency, tv_amp, tv_volts, tv_crt_Date, tv_month, tv_navbar_email, tv_navbar_name, tv_b1, tv_b2, tv_b3, tv_b4;
+    RelativeLayout rv_main_card;
     FirebaseAuth mAuth;
     Query query;
     CircularImageView circleImageView, navCircleImage;
@@ -66,16 +75,15 @@ public class IndexActivity extends AppCompatActivity
     DrawerLayout drawer;
     NavigationView navigationView;
     BaseActivity baseActivity;
-
+    String cardTheme = "White", cardStatus = "Online";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
 
-
+        sharedPrefranceValue();
         Common.profile = new Account();
-
         baseActivity = new BaseActivity();
         billCalculationService = new BillCalculationService();
 
@@ -93,16 +101,6 @@ public class IndexActivity extends AppCompatActivity
             email = mAuth.getCurrentUser().getEmail();
             fetchNameAndGender(email);
         }
-
-//        setSupportActionBar(toolbar);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setTitle("HomeAutomation");
-//        }
-
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
 
         View headerView = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
@@ -134,9 +132,22 @@ public class IndexActivity extends AppCompatActivity
         iv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addUnitsOfflineDialog();
+//                addUnitsOfflineDialog();
+                Intent intent = new Intent(IndexActivity.this, UnitCardSettingActivity.class);
+                startActivity(intent);
             }
         });
+        iv_thunder_mainIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation rotation = AnimationUtils.loadAnimation(IndexActivity.this, R.anim.zoom_in);
+                rotation.setRepeatCount(Animation.INFINITE);
+                iv_thunder_mainIcon.startAnimation(rotation);
+                addUnitsOfflineDialog();
+
+            }
+        });
+
     }
 
     private void addUnitsOfflineDialog() {
@@ -196,7 +207,7 @@ public class IndexActivity extends AppCompatActivity
                         tv_currency.setText(Common.offlineRPS + " Rs");
                     }
 
-                } else{
+                } else {
                     Toast.makeText(IndexActivity.this, "Enter Units", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -209,11 +220,22 @@ public class IndexActivity extends AppCompatActivity
         dialog.getWindow().setAttributes(lp);
     }
 
+    private void sharedPrefranceValue() {
+
+        SharedPreferences prefs = getSharedPreferences("CardSetting", MODE_PRIVATE);
+        String restoredText = prefs.getString("cardStatus", null);
+        if (restoredText != null) {
+            cardStatus = prefs.getString("cardStatus", "Offline");
+            cardTheme = prefs.getString("cardTheme", "White");
+        }
+    }
 
     private void headerComponents() {
 
         View backPressed = findViewById(R.id.back_btn);
         backPressed.setVisibility(View.GONE);
+        View home = findViewById(R.id.imageviewHome);
+        home.setVisibility(View.GONE);
 
 
         View navBtn = findViewById(R.id.iv_navbar);
@@ -245,6 +267,9 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void iniUiComponents() {
+        iv_thunder_mainIcon = (ImageView) findViewById(R.id.iv_thunder_mainIcon);
+        iv_thunder_icon4 = (ImageView) findViewById(R.id.iv_thunder_icon4);
+        iv_thunder_icon = (ImageView) findViewById(R.id.iv_thunder_icon);
         iv_setting = (ImageView) findViewById(R.id.iv_setting);
         tv_month = (TextView) findViewById(R.id.tv_month);
         ltv_bulb = (LottieAnimationView) findViewById(R.id.lav_loading);
@@ -259,11 +284,27 @@ public class IndexActivity extends AppCompatActivity
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        rv_main_card = (RelativeLayout) findViewById(R.id.rv_main_card);
+        ll_box1 = findViewById(R.id.ll_box1);
+        ll_box2 = findViewById(R.id.ll_box2);
+        ll_box3 = findViewById(R.id.ll_box3);
+        ll_box4 = findViewById(R.id.ll_box4);
+        tv_b1 = findViewById(R.id.tv_b1);
+        tv_b2 = findViewById(R.id.tv_b2);
+        tv_b3 = findViewById(R.id.tv_b3);
+        tv_b4 = findViewById(R.id.tv_b4);
 
     }
 
-    private void fetchMonthData() {
 
+    private void fetchMonthData() {
+        themeChanger();
+        if (cardStatus.equals("Offline")) {
+            return;
+        }
+//        if (!settingStatusOnline) {
+//            return;
+//        }
         ltv_bulb.setVisibility(View.VISIBLE);
         Query monthQuery = FirebaseDatabase.getInstance().getReference(Common.STR_Month)
                 .orderByChild("devicemac")
@@ -286,6 +327,15 @@ public class IndexActivity extends AppCompatActivity
                     }
                 }
                 ltv_bulb.setVisibility(View.GONE);
+                Animation rotation = AnimationUtils.loadAnimation(IndexActivity.this, R.anim.rotation_clockwise);
+                rotation.setRepeatCount(Animation.INFINITE);
+                iv_thunder_icon.startAnimation(rotation);
+
+                Animation rotation2 = AnimationUtils.loadAnimation(IndexActivity.this, R.anim.rotation_anticlockwise);
+                rotation2.setRepeatCount(Animation.INFINITE);
+                iv_thunder_icon4.startAnimation(rotation2);
+
+
             }
 
             @Override
@@ -294,6 +344,88 @@ public class IndexActivity extends AppCompatActivity
                 ltv_bulb.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void themeChanger() {
+        switch (cardTheme) {
+            case "Black":
+                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.Black));
+                tv_month.setTextColor(this.getResources().getColor(R.color.White));
+                tv_units.setTextColor(this.getResources().getColor(R.color.White));
+                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
+                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
+                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
+                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
+                iv_setting.setImageResource(R.drawable.setting_white);
+                //MiniBoxes
+                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.Black));
+                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.Black));
+                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.Black));
+                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.Black));
+                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                break;
+
+            case "Brown":
+                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
+                tv_month.setTextColor(this.getResources().getColor(R.color.White));
+                tv_units.setTextColor(this.getResources().getColor(R.color.White));
+                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
+                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
+                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
+                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
+                iv_setting.setImageResource(R.drawable.setting_white);
+                //MiniBoxes
+                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
+                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
+                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
+                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
+                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                break;
+            case "Blue":
+                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
+                tv_month.setTextColor(this.getResources().getColor(R.color.White));
+                tv_units.setTextColor(this.getResources().getColor(R.color.White));
+                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
+                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
+                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
+                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
+                iv_setting.setImageResource(R.drawable.setting_white);
+                //MiniBoxes
+                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
+                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
+                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
+                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
+                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
+                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                break;
+            case "White":
+                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.White));
+                tv_month.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_units.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_currency.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_amp.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_volts.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.Black));
+                iv_setting.setImageResource(R.drawable.setting);
+                //MiniBoxes
+                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.White));
+                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.White));
+                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.White));
+                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.White));
+                tv_b1.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_b2.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_b3.setTextColor(this.getResources().getColor(R.color.Black));
+                tv_b4.setTextColor(this.getResources().getColor(R.color.Black));
+                break;
+        }
     }
 
     private void fetchNameAndGender(String email) {
@@ -501,11 +633,8 @@ public class IndexActivity extends AppCompatActivity
         if (id == R.id.nav_profile) {
             Intent intent = new Intent(this, ProfileSettingActivity.class);
             startActivity(intent);
-//            Intent intent = new Intent(IndexActivity.this, ProfileEditActivity.class);
-//            startActivity(intent);
         } else if (id == R.id.nav_changepassword) {
             showChangePasswordDialog();
-
         } else if (id == R.id.nav_adddevice) {
             if (Common.profile.getDevicemac() == null) {
                 addDeviceMacDialog();
@@ -522,7 +651,8 @@ public class IndexActivity extends AppCompatActivity
             Intent intent = new Intent(IndexActivity.this, AboutUsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_feedback) {
-            Toast.makeText(this, "Feedback", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(IndexActivity.this, CustomerFeedBackActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_contact) {
             Intent intent = new Intent(IndexActivity.this, ContactUs.class);
             startActivity(intent);
@@ -570,9 +700,19 @@ public class IndexActivity extends AppCompatActivity
         ((AppCompatButton) dialog.findViewById(R.id.bt_submit)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (newPassword.getText().toString().trim().equals(confirmPassword.getText().toString().trim()) & !newPassword.getText().toString().trim().equals("") & !confirmPassword.getText().toString().trim().equals("")) {
+                if (newPassword.getText().toString().trim().equals(confirmPassword.getText().toString().trim())
+                        & !newPassword.getText().toString().trim().equals("")
+                        & !newPassword.getText().toString().trim().isEmpty()
+                        & !confirmPassword.getText().toString().trim().isEmpty()
+                        & !confirmPassword.getText().toString().trim().equals("")
+                        & !oldPassword.getText().toString().trim().isEmpty()) {
                     updatePasswordInDb(newPassword.getText().toString().trim(), oldPassword.getText().toString().trim());
                     dialog.dismiss();
+                } else if (oldPassword.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(IndexActivity.this, "Enter old password", Toast.LENGTH_SHORT).show();
+                } else if (newPassword.getText().toString().trim().isEmpty()
+                        || confirmPassword.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(IndexActivity.this, "Enter new or confirm password", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(IndexActivity.this, "Password must match confirm password", Toast.LENGTH_SHORT).show();
                     newPassword.setText("");

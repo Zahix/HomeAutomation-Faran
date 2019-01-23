@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".CustomerFeedBackActivity">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/header" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_marginTop="10dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/header"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/text_rateyourexp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Rate your experience with us."
+                android:textSize="18sp" />
+
+            <RelativeLayout
+                android:id="@+id/l_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_rateyourexp"
+                android:background="@color/grey_200">
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:numStars="5"
+                    android:stepSize="1" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_feedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/l_rating"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Your feedback is important"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/et_coment"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_below="@+id/tv_feedback"
+                android:layout_margin="10dp"
+                android:background="@color/grey_200"
+                android:gravity="top|left"
+                android:hint="Feed Back"
+                android:inputType="textMultiLine"
+                android:maxLength="260"
+                android:overScrollMode="always"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:scrollHorizontally="false">
+
+                <requestFocus />
+            </EditText>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/et_coment"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:weightSum="2">
+
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/grey_300"
+                    android:text="Cancel"
+                    android:textColor="@color/Black" />
+
+                <Button
+                    android:id="@+id/submit"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/cancel"
+                    android:layout_weight="1"
+                    android:background="@color/blue_300"
+                    android:text="Submit"
+                    android:textColor="@color/White" />
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</RelativeLayout>

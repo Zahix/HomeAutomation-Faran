@@ -81,7 +81,7 @@
                 android:id="@+id/ll_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/space40"
+
                 android:background="@drawable/bg_ediitext"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/space5">
@@ -108,6 +108,17 @@
                     android:textSize="@dimen/txt16" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tv_forgetpass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Forget Password"
+                android:textColor="@color/White"
+                android:layout_marginBottom="@dimen/space40"
+                android:textAlignment="textEnd"
+                android:padding="5dp"
+                android:gravity="end" />
+
             <LinearLayout
                 android:id="@+id/ll_button"
                 android:layout_width="wrap_content"
@@ -129,7 +140,7 @@
                     android:padding="10dp"
                     android:layout_width="@dimen/btn_width"
                     android:layout_height="wrap_content"
-                    android:text="Dont have an account SignUp"
+                    android:text="@string/Dont_have_an_account_SignUp"
                     android:textSize="@dimen/txt14"
                     android:textStyle="normal"
                     android:textColor="@android:color/white"

@@ -24,6 +24,8 @@ public class Common {
     public static boolean StateForMac = true;
     public static UnitCalOffline unitCalService;
     public static String offlineRPS;
+    public static boolean settingStatusOnline = true;
+    public static String CardTheme = "Black";
 
     public static String Validation(String username, String email, String password) {
 

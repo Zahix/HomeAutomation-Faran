@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -53,6 +54,7 @@ public class LogInActivity extends AppCompatActivity {
     private boolean processing = false;
     BaseActivity baseActivity;
     Account myAccount;
+    TextView tv_forgetpass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class LogInActivity extends AppCompatActivity {
         baseActivity = new BaseActivity();
         mAuth = FirebaseAuth.getInstance();
         email = (EditText) findViewById(R.id.et_email);
+        tv_forgetpass = (TextView) findViewById(R.id.tv_forgetpass);
         email.setPadding(0, 15, 0, 15);
         password = (EditText) findViewById(R.id.et_password);
         password.setPadding(0, 15, 0, 15);
@@ -75,8 +78,65 @@ public class LogInActivity extends AppCompatActivity {
         }
         changeStatusBarColor();
 
-
+        tv_forgetpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showForgetPasswordDialog();
+            }
+        });
     }
+
+    private void showForgetPasswordDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.forget_password);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        final EditText email = (EditText) dialog.findViewById(R.id.et_email);
+
+
+        ((AppCompatButton) dialog.findViewById(R.id.bt_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        ((AppCompatButton) dialog.findViewById(R.id.bt_submit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!email.getText().toString().equals("")){
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email.getText().toString().trim())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        baseActivity.sucessDialog(LogInActivity.this,getResources().getString(R.string.email_sent_to)+email.getText().toString().trim(),getResources().getString(R.string.email_sent),null);
+                                    }
+                                    else{
+                                        baseActivity.errorDialog(LogInActivity.this,getResources().getString(R.string.failed_email),getResources().getString(R.string.error));
+                                    }
+                                }
+                            });
+                    dialog.dismiss();
+                }
+                else{
+                    Toast.makeText(LogInActivity.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
+
+
 
     public void SignUpNav(View view) {
         Intent intent = new Intent(this, SignUpActivity.class);
