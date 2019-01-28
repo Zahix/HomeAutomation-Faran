@@ -298,7 +298,7 @@ public class IndexActivity extends AppCompatActivity
 
 
     private void fetchMonthData() {
-        themeChanger();
+
         if (cardStatus.equals("Offline")) {
             return;
         }
@@ -347,85 +347,50 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void themeChanger() {
+        Integer selectedThemeTcolor, selectedThemeDrawable, selectedThemeBcolor;
+        selectedThemeTcolor = R.color.Black;
+        selectedThemeDrawable = R.drawable.setting;
+        selectedThemeBcolor = R.color.White;
         switch (cardTheme) {
             case "Black":
-                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.Black));
-                tv_month.setTextColor(this.getResources().getColor(R.color.White));
-                tv_units.setTextColor(this.getResources().getColor(R.color.White));
-                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
-                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
-                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
-                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
-                iv_setting.setImageResource(R.drawable.setting_white);
-                //MiniBoxes
-                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.Black));
-                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.Black));
-                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.Black));
-                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.Black));
-                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                selectedThemeTcolor = R.color.White;
+                selectedThemeDrawable = R.drawable.setting_white;
+                selectedThemeBcolor = R.color.Black;
                 break;
-
             case "Brown":
-                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
-                tv_month.setTextColor(this.getResources().getColor(R.color.White));
-                tv_units.setTextColor(this.getResources().getColor(R.color.White));
-                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
-                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
-                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
-                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
-                iv_setting.setImageResource(R.drawable.setting_white);
-                //MiniBoxes
-                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
-                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
-                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
-                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.brown_600));
-                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                selectedThemeTcolor = R.color.White;
+                selectedThemeDrawable = R.drawable.setting_white;
+                selectedThemeBcolor = R.color.brown_600;
                 break;
             case "Blue":
-                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
-                tv_month.setTextColor(this.getResources().getColor(R.color.White));
-                tv_units.setTextColor(this.getResources().getColor(R.color.White));
-                tv_currency.setTextColor(this.getResources().getColor(R.color.White));
-                tv_amp.setTextColor(this.getResources().getColor(R.color.White));
-                tv_volts.setTextColor(this.getResources().getColor(R.color.White));
-                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.White));
-                iv_setting.setImageResource(R.drawable.setting_white);
-                //MiniBoxes
-                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
-                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
-                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
-                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.blue_900));
-                tv_b1.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b2.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b3.setTextColor(this.getResources().getColor(R.color.White));
-                tv_b4.setTextColor(this.getResources().getColor(R.color.White));
+                selectedThemeTcolor = R.color.White;
+                selectedThemeDrawable = R.drawable.setting_white;
+                selectedThemeBcolor = R.color.blue_900;
                 break;
             case "White":
-                rv_main_card.setBackgroundColor(this.getResources().getColor(R.color.White));
-                tv_month.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_units.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_currency.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_amp.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_volts.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_crt_Date.setTextColor(this.getResources().getColor(R.color.Black));
-                iv_setting.setImageResource(R.drawable.setting);
-                //MiniBoxes
-                ll_box1.setBackgroundColor(this.getResources().getColor(R.color.White));
-                ll_box2.setBackgroundColor(this.getResources().getColor(R.color.White));
-                ll_box3.setBackgroundColor(this.getResources().getColor(R.color.White));
-                ll_box4.setBackgroundColor(this.getResources().getColor(R.color.White));
-                tv_b1.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_b2.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_b3.setTextColor(this.getResources().getColor(R.color.Black));
-                tv_b4.setTextColor(this.getResources().getColor(R.color.Black));
+                selectedThemeTcolor = R.color.Black;
+                selectedThemeDrawable = R.drawable.setting;
+                selectedThemeBcolor = R.color.White;
                 break;
         }
+        rv_main_card.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        tv_month.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_units.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_currency.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_amp.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_volts.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_crt_Date.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        iv_setting.setImageResource(selectedThemeDrawable);
+        //MiniBoxes
+        ll_box1.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        ll_box2.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        ll_box3.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        ll_box4.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        tv_b1.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_b2.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_b3.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+        tv_b4.setTextColor(this.getResources().getColor(selectedThemeTcolor));
+
     }
 
     private void fetchNameAndGender(String email) {
@@ -465,6 +430,7 @@ public class IndexActivity extends AppCompatActivity
                     }
                 }
                 ltv_bulb.setVisibility(View.GONE);
+                themeChanger();
                 if (deviceMac != null) {
                     if (!deviceMac.isEmpty()) {
                         fetchMonthData();
