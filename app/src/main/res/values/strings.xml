@@ -17,4 +17,12 @@
     <string name="linear_chart">Linear Chart</string>
     <string name="devolping">Devolping</string>
     <string name="title_activity_index">IndexActivity</string>
+
+
+    <string name="Dont_have_an_account_SignUp">Dont have an account  <u>SignUp</u>.</string>
+
+    <string name="email_sent_to">We have sent you instructions to reset your password at: </string>
+    <string name="email_sent">Email sent</string>
+    <string name="failed_email">Failed to send email. Your email might not be registered </string>
+    <string name="error">Error</string>
 </resources>

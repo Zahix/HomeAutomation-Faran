@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.zahid.homeautomation.Utill.Common;
@@ -19,6 +20,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
 
     TextView tv_name, tv_view_edit_profile;
     CircularImageView civ_avatar;
+    LinearLayout ll_rateapp;
     FirebaseAuth mAuth;
 
     @Override
@@ -32,6 +34,13 @@ public class ProfileSettingActivity extends AppCompatActivity {
         iniUiComponents();
         headerComponents();
 
+        ll_rateapp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            Intent intent = new Intent(ProfileSettingActivity.this,RateAppActivity.class);
+            startActivity(intent);
+            }
+        });
         tv_view_edit_profile.setPaintFlags(tv_view_edit_profile.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         if (Common.profile != null) {
             if (Common.profile.getName() != null) {
@@ -113,6 +122,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
     }
 
     private void iniUiComponents() {
+        ll_rateapp = (LinearLayout) findViewById(R.id.ll_rateapp);
         civ_avatar = (CircularImageView) findViewById(R.id.civ_avatar);
         tv_view_edit_profile = (TextView) findViewById(R.id.tv_view_edit_profile);
         tv_name = (TextView) findViewById(R.id.tv_name);

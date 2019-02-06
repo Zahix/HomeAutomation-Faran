@@ -465,6 +465,8 @@
     <color name="grey_900">#212121</color>
     <color name="grey_1000">#1a1a1a</color>
 
+    <color name="colorActive">#d4d4d4</color>
+    <color name="colorStand">#F8BF1C</color>
 
     <!--for random color generator -->
     <array name="mdcolor_random">

@@ -50,6 +50,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+
 import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -60,7 +61,7 @@ import static com.example.zahid.homeautomation.Utill.Common.settingStatusOnline;
 public class IndexActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    LinearLayout ll_box1, ll_box2, ll_box3, ll_box4;
+    LinearLayout ll_box1, ll_box2, ll_box3, ll_box4, ll_header;
     ImageView iv_setting, iv_thunder_icon, iv_thunder_icon4, iv_thunder_mainIcon;
     TextView tv_welcome, tv_units, tv_currency, tv_amp, tv_volts, tv_crt_Date, tv_month, tv_navbar_email, tv_navbar_name, tv_b1, tv_b2, tv_b3, tv_b4;
     RelativeLayout rv_main_card;
@@ -82,7 +83,9 @@ public class IndexActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
 
+        //getting theme setting and or so
         sharedPrefranceValue();
+
         Common.profile = new Account();
         baseActivity = new BaseActivity();
         billCalculationService = new BillCalculationService();
@@ -96,6 +99,8 @@ public class IndexActivity extends AppCompatActivity
 //            billCalculationService.execute("713");
 //        }
         iniUiComponents();
+
+
         calendar = Calendar.getInstance();
         if (mAuth.getCurrentUser() != null) {
             email = mAuth.getCurrentUser().getEmail();
@@ -110,25 +115,27 @@ public class IndexActivity extends AppCompatActivity
         navCircleImage = (CircularImageView) headerView.findViewById(R.id.civ_navbar_avatar);
 
         //make translucent statusBar on kitkat devices
-        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
-            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
-        }
-        if (Build.VERSION.SDK_INT >= 19) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-        //make fully Android Transparent Status bar
-        if (Build.VERSION.SDK_INT >= 21) {
-            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().hide();
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < 21) {
+//            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, true);
+//        }
+//        if (Build.VERSION.SDK_INT >= 19) {
+//            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+//        }
+//        //make fully Android Transparent Status bar
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+//        }
+//
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            if (getSupportActionBar() != null) {
+//                getSupportActionBar().hide();
+//            }
+//        }
+//        getSupportActionBar().hide();
         headerComponents();
+
         iv_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,12 +238,10 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void headerComponents() {
-
         View backPressed = findViewById(R.id.back_btn);
         backPressed.setVisibility(View.GONE);
         View home = findViewById(R.id.imageviewHome);
         home.setVisibility(View.GONE);
-
 
         View navBtn = findViewById(R.id.iv_navbar);
         navBtn.setVisibility(View.VISIBLE);
@@ -298,6 +303,9 @@ public class IndexActivity extends AppCompatActivity
 
 
     private void fetchMonthData() {
+        Calendar c = Calendar.getInstance();
+        final String monthCode = String.valueOf(c.get(Calendar.MONTH) + 1);
+
 
         if (cardStatus.equals("Offline")) {
             return;
@@ -315,7 +323,7 @@ public class IndexActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot monthDataSnapShot : dataSnapshot.getChildren()) {
                     Month month = monthDataSnapShot.getValue(Month.class);
-                    if (month != null && month.getMonth().equals("nov")) {
+                    if (month != null && month.getMonthcode().equals(monthCode)) {
                         tv_units.setText(month.getMounits() + " Unit");
                         tv_amp.setText(month.getMomaxampere() + " Amp");
                         tv_volts.setText(month.getMomaxvoltage() + " Volt");
@@ -347,6 +355,7 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void themeChanger() {
+        //Theme
         Integer selectedThemeTcolor, selectedThemeDrawable, selectedThemeBcolor;
         selectedThemeTcolor = R.color.Black;
         selectedThemeDrawable = R.drawable.setting;
@@ -372,8 +381,36 @@ public class IndexActivity extends AppCompatActivity
                 selectedThemeDrawable = R.drawable.setting;
                 selectedThemeBcolor = R.color.White;
                 break;
+
+            case "BlueG":
+                selectedThemeTcolor = R.color.Black;
+                selectedThemeDrawable = R.drawable.setting;
+                selectedThemeBcolor = R.drawable.bg_gradient;
+                break;
+
+            case "ForeverLostG":
+                selectedThemeTcolor = R.color.White;
+                selectedThemeDrawable = R.drawable.setting_white;
+                selectedThemeBcolor = R.drawable.bg_foreverlost;
+                break;
+
+            case "LostmemoryG":
+                selectedThemeTcolor = R.color.Black;
+                selectedThemeDrawable = R.drawable.setting;
+                selectedThemeBcolor = R.drawable.bg_lostmemory;
+                break;
+
+            case "InfluenzaG":
+                selectedThemeTcolor = R.color.White;
+                selectedThemeDrawable = R.drawable.setting_white;
+                selectedThemeBcolor = R.drawable.bg_influenza;
+                break;
         }
-        rv_main_card.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        if (cardTheme.equals("InfluenzaG") || cardTheme.equals("LostmemoryG") || cardTheme.equals("ForeverLostG") || cardTheme.equals("BlueG")) {
+            rv_main_card.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
+        } else {
+            rv_main_card.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        }
         tv_month.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         tv_units.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         tv_currency.setTextColor(this.getResources().getColor(selectedThemeTcolor));
@@ -382,10 +419,17 @@ public class IndexActivity extends AppCompatActivity
         tv_crt_Date.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         iv_setting.setImageResource(selectedThemeDrawable);
         //MiniBoxes
-        ll_box1.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
-        ll_box2.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
-        ll_box3.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
-        ll_box4.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        if (cardTheme.equals("InfluenzaG") || cardTheme.equals("LostmemoryG") || cardTheme.equals("ForeverLostG") || cardTheme.equals("BlueG")){
+            ll_box1.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
+            ll_box2.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
+            ll_box3.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
+            ll_box4.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
+        }else {
+            ll_box1.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+            ll_box2.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+            ll_box3.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+            ll_box4.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
+        }
         tv_b1.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         tv_b2.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         tv_b3.setTextColor(this.getResources().getColor(selectedThemeTcolor));
@@ -424,6 +468,7 @@ public class IndexActivity extends AppCompatActivity
                         tv_navbar_name.setText(account.getName());
                     }
                 }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().show();
@@ -463,7 +508,7 @@ public class IndexActivity extends AppCompatActivity
         final TextView email = (TextView) dialog.findViewById(R.id.tv_email);
         final TextView userName = (TextView) dialog.findViewById(R.id.tv_name);
         final EditText et_post = (EditText) dialog.findViewById(R.id.et_post);
-        final CircularImageView civ_dialog_avatar = (CircularImageView) findViewById(R.id.civ_dialog_avatar);
+        final CircularImageView civ_dialog_avatar = dialog.findViewById(R.id.civ_dialog_avatarb);
 
         email.setText(Common.profile.getEmail());
         userName.setText(Common.profile.getName());
@@ -617,7 +662,8 @@ public class IndexActivity extends AppCompatActivity
             Intent intent = new Intent(IndexActivity.this, AboutUsActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_feedback) {
-            Intent intent = new Intent(IndexActivity.this, CustomerFeedBackActivity.class);
+//            Intent intent = new Intent(IndexActivity.this, CustomerFeedBackActivity.class);
+            Intent intent = new Intent(IndexActivity.this, RateAppActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_contact) {
             Intent intent = new Intent(IndexActivity.this, ContactUs.class);

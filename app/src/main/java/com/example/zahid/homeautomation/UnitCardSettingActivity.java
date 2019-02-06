@@ -25,7 +25,7 @@ import static com.example.zahid.homeautomation.Utill.Common.settingStatusOnline;
 
 public class UnitCardSettingActivity extends AppCompatActivity {
 
-    LinearLayout ll_blue, ll_black, ll_brown, ll_white, ll_selected;
+    LinearLayout ll_blue, ll_black, ll_brown, ll_white, ll_selected, ll_blue_gradient, ll_foreverlost_gradient, ll_lostmemory_gradient, ll_influenza_gradient;
     Button btn_cancel, btn_save;
     SwitchCompat sc_state;
     TextView tv_status;
@@ -107,7 +107,36 @@ public class UnitCardSettingActivity extends AppCompatActivity {
                 CardTheme = "Black";
             }
         });
+        ll_blue_gradient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_gradient));
+                CardTheme = "BlueG";
+            }
+        });
 
+        ll_foreverlost_gradient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_foreverlost));
+                CardTheme = "ForeverLostG";
+            }
+        });
+        ll_lostmemory_gradient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_lostmemory));
+                CardTheme = "LostmemoryG";
+            }
+        });
+
+        ll_influenza_gradient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_influenza));
+                CardTheme = "InfluenzaG";
+            }
+        });
     }
 
 
@@ -207,6 +236,10 @@ public class UnitCardSettingActivity extends AppCompatActivity {
         ll_blue = findViewById(R.id.ll_blue);
         ll_brown = findViewById(R.id.ll_brown);
         ll_white = findViewById(R.id.ll_white);
+        ll_blue_gradient = findViewById(R.id.ll_blue_gradient);
+        ll_foreverlost_gradient = findViewById(R.id.ll_foreverlost_gradient);
+        ll_lostmemory_gradient = findViewById(R.id.ll_lostmemory_gradient);
+        ll_influenza_gradient = findViewById(R.id.ll_influenza_gradient);
         ll_selected = findViewById(R.id.ll_selected_theme);
         tv_status = findViewById(R.id.tv_status);
         sc_state = findViewById(R.id.sc_state);

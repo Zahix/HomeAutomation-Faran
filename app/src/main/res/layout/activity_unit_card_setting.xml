@@ -141,22 +141,25 @@
                         android:textColor="@color/grey_80"
                         android:textSize="18sp" />
 
-
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="110dp"
                     android:background="?attr/selectableItemBackground"
                     android:gravity="center_vertical"
                     android:minHeight="@dimen/spacing_xxlarge"
-                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:orientation="vertical"
                     android:paddingLeft="@dimen/spacing_medium"
                     android:paddingRight="@dimen/spacing_medium">
 
                     <RelativeLayout
+
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        >
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -203,6 +206,59 @@
 
                         </LinearLayout>
                     </RelativeLayout>
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="5">
+
+                            <LinearLayout
+                                android:id="@+id/ll_blue_gradient"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_gradient"
+                                android:orientation="horizontal" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_foreverlost_gradient"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_foreverlost"
+                                android:orientation="horizontal" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_lostmemory_gradient"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_lostmemory"
+                                android:orientation="horizontal" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_influenza_gradient"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_margin="5dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_influenza"
+                                android:orientation="horizontal" />
+
+                        </LinearLayout>
+                    </RelativeLayout>
+
                 </LinearLayout>
 
                 <TextView

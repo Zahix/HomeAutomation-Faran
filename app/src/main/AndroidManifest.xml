@@ -42,7 +42,8 @@
         <activity android:name=".AboutUsActivity" />
         <activity android:name=".ContactUs" />
         <activity android:name=".CustomerFeedBackActivity" />
-        <activity android:name=".UnitCardSettingActivity"></activity>
+        <activity android:name=".UnitCardSettingActivity" />
+        <activity android:name=".RateAppActivity"></activity>
     </application>
 
 </manifest>
