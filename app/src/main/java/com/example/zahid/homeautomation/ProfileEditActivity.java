@@ -1,6 +1,7 @@
 package com.example.zahid.homeautomation;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -47,9 +48,10 @@ import static com.example.zahid.homeautomation.Utill.Common.month;
 public class ProfileEditActivity extends AppCompatActivity {
 
     CircularImageView avatar;
+    String cardStatus, cardTheme;
     FirebaseAuth mAuth;
     TextInputEditText txtFName, txtLName, txtEmail, txtOccupation, et_address, et_city;
-    Button dob_pickdate, btnUpdate;
+    Button dob_pickdate, btnUpdate, btnCancel;
     AppCompatSpinner sp_gender;
     private List<String> gender;
     private String selectedGender;
@@ -61,12 +63,19 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
 
+
         baseActivity = new BaseActivity();
         mAuth = FirebaseAuth.getInstance();
         iniUiComponents();
         headerComponents();
         settingUiComponentData();
 
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +170,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         txtFName = (TextInputEditText) findViewById(R.id.txtFName);
         txtLName = (TextInputEditText) findViewById(R.id.txtLName);
         txtEmail = (TextInputEditText) findViewById(R.id.txtEmail);
+        btnCancel = findViewById(R.id.btnCancel);
         txtOccupation = (TextInputEditText) findViewById(R.id.txtOccupation);
         et_address = (TextInputEditText) findViewById(R.id.et_address);
         et_city = (TextInputEditText) findViewById(R.id.et_city);
@@ -318,4 +328,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         datePicker.setMaxDate(cur_calender);
         datePicker.show(getFragmentManager(), "Datepickerdialog");
     }
+
+
+
 }

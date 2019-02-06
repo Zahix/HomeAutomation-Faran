@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,9 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -54,8 +51,6 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import java.util.Calendar;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static com.example.zahid.homeautomation.Utill.Common.settingStatusOnline;
 
 
 public class IndexActivity extends AppCompatActivity
@@ -89,18 +84,7 @@ public class IndexActivity extends AppCompatActivity
         Common.profile = new Account();
         baseActivity = new BaseActivity();
         billCalculationService = new BillCalculationService();
-
-        //        if (billCalculationService.validateRequest("243")) {
-//            billCalculationService.execute("243");
-//            billCalculationService.execute("481");
-//            billCalculationService.execute("60");
-//            billCalculationService.execute("330");
-//            billCalculationService.execute("460");
-//            billCalculationService.execute("713");
-//        }
         iniUiComponents();
-
-
         calendar = Calendar.getInstance();
         if (mAuth.getCurrentUser() != null) {
             email = mAuth.getCurrentUser().getEmail();
@@ -228,7 +212,6 @@ public class IndexActivity extends AppCompatActivity
     }
 
     private void sharedPrefranceValue() {
-
         SharedPreferences prefs = getSharedPreferences("CardSetting", MODE_PRIVATE);
         String restoredText = prefs.getString("cardStatus", null);
         if (restoredText != null) {
@@ -242,7 +225,8 @@ public class IndexActivity extends AppCompatActivity
         backPressed.setVisibility(View.GONE);
         View home = findViewById(R.id.imageviewHome);
         home.setVisibility(View.GONE);
-
+        ll_header = findViewById(R.id.ll_head);
+        ll_header.setVisibility(View.INVISIBLE);
         View navBtn = findViewById(R.id.iv_navbar);
         navBtn.setVisibility(View.VISIBLE);
         navBtn.setOnClickListener(new View.OnClickListener() {
@@ -419,12 +403,12 @@ public class IndexActivity extends AppCompatActivity
         tv_crt_Date.setTextColor(this.getResources().getColor(selectedThemeTcolor));
         iv_setting.setImageResource(selectedThemeDrawable);
         //MiniBoxes
-        if (cardTheme.equals("InfluenzaG") || cardTheme.equals("LostmemoryG") || cardTheme.equals("ForeverLostG") || cardTheme.equals("BlueG")){
+        if (cardTheme.equals("InfluenzaG") || cardTheme.equals("LostmemoryG") || cardTheme.equals("ForeverLostG") || cardTheme.equals("BlueG")) {
             ll_box1.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
             ll_box2.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
             ll_box3.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
             ll_box4.setBackground(this.getResources().getDrawable(selectedThemeBcolor));
-        }else {
+        } else {
             ll_box1.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
             ll_box2.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
             ll_box3.setBackgroundColor(this.getResources().getColor(selectedThemeBcolor));
@@ -474,6 +458,7 @@ public class IndexActivity extends AppCompatActivity
                         getSupportActionBar().show();
                     }
                 }
+                ll_header.setVisibility(View.VISIBLE);
                 ltv_bulb.setVisibility(View.GONE);
                 themeChanger();
                 if (deviceMac != null) {

@@ -155,6 +155,18 @@ public class UnitCardSettingActivity extends AppCompatActivity {
             } else if (cardTheme.equals("Blue")) {
                 ll_selected.setBackground(getResources().getDrawable(R.color.blue_900));
             }
+            else if (cardTheme.equals("BlueG")) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_gradient));
+            }
+            else if (cardTheme.equals("ForeverLostG")) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_foreverlost));
+            }
+            else if (cardTheme.equals("LostmemoryG")) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_lostmemory));
+            }
+            else if (cardTheme.equals("InfluenzaG")) {
+                ll_selected.setBackground(getResources().getDrawable(R.drawable.bg_influenza));
+            }
         }
         if (restoredText != null) {
             if (prefs.getString("cardStatus", "Offline").equals("Online")) {
@@ -246,4 +258,6 @@ public class UnitCardSettingActivity extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel);
         btn_save = findViewById(R.id.btn_save);
     }
+
+
 }
